@@ -34,14 +34,14 @@ app.get("/", (req, res) => {
       </header>
       <div class="layout-container">
         <iframe
-          lazy
+          loading="lazy"
           name="nav"
           src="nav/"
           style="height: 100%"
           frameborder="0"
         ></iframe>
         <iframe
-          lazy
+          loading="lazy"
           name="main"
           src="new/"
           style="height: 100%"
@@ -61,12 +61,12 @@ app.get("/nav", (req, res) => {
       <ul>
         ${projects
           .map(
-            project =>
+            (project) =>
               html`<li>
                 <a href="/project/${project.id}/" target="main"
                   >${project.name}</a
                 >
-              </li>`,
+              </li>`
           )
           .join("")}
       </ul>
@@ -77,7 +77,7 @@ app.get("/nav", (req, res) => {
 
 app.all("/new", async (req, res) => {
   if (req.method === "POST") {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     let project = {
       id: Math.random().toString().slice(2, 8),
       name: req.body.name,
@@ -121,7 +121,7 @@ app.get("/home", (req, res) => {
 });
 
 app.get("/project/:id", (req, res) => {
-  let project = projects.find(project => project.id === req.params.id);
+  let project = projects.find((project) => project.id === req.params.id);
 
   if (!project) {
     res.writeHead(404, { "Content-Type": "text/html" });
@@ -144,12 +144,12 @@ app.get("/project/:id", (req, res) => {
         <button type="submit">Add</button>
       </p>
     </form>
-    <iframe lazy name="tasks" src="tasks/" frameborder="0"></iframe>
+    <iframe loading="lazy" name="tasks" src="tasks/" frameborder="0"></iframe>
     <script>
       let frame = document.querySelector("iframe[name=tasks]");
       let form = document.querySelector("form");
       let button = form.querySelector("button[type=submit]");
-      form.addEventListener("submit", e => {
+      form.addEventListener("submit", (e) => {
         form.elements[0].select();
         button.disabled = true;
         function handleLoad() {
@@ -164,7 +164,7 @@ app.get("/project/:id", (req, res) => {
 });
 
 app.all("/project/:id/tasks", async (req, res) => {
-  let project = projects.find(project => project.id === req.params.id);
+  let project = projects.find((project) => project.id === req.params.id);
 
   if (!project) {
     res.writeHead(404, { "Content-Type": "text/html" });
@@ -173,7 +173,7 @@ app.all("/project/:id/tasks", async (req, res) => {
   }
 
   if (req.method === "POST") {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     project.tasks.unshift({
       id: Math.random().toString().slice(2, 8),
       name: req.body.task,
@@ -184,7 +184,7 @@ app.all("/project/:id/tasks", async (req, res) => {
   res.write(
     project.tasks
       .map(
-        task =>
+        (task) =>
           html`
             <iframe
               name="${`task:${task.id}`}"
@@ -192,16 +192,16 @@ app.all("/project/:id/tasks", async (req, res) => {
               frameborder="0"
               style="width: 100%; height: 1.25em"
             ></iframe>
-          `,
+          `
       )
-      .join(""),
+      .join("")
   );
   res.end();
 });
 
 app.all("/project/:project/tasks/:task", (req, res) => {
-  let project = projects.find(project => project.id === req.params.project);
-  let task = project.tasks.find(task => task.id === req.params.task);
+  let project = projects.find((project) => project.id === req.params.project);
+  let task = project.tasks.find((task) => task.id === req.params.task);
 
   if (req.method === "POST") {
     task.complete = req.body.complete === "on";
